@@ -3,37 +3,17 @@
 import React, { useState } from "react";
 import { Folder as FolderIcon, ChevronRight, ChevronDown } from "lucide-react";
 
-interface Folder {
-  name: string;
-  isOpen?: boolean;
-  folders?: Folder[];
-}
+import type { Folder } from "@/lib/definitions";
 
 export default function FileExplorer({
+  folders,
+  setFolders,
   onPathChange,
 }: {
+  folders: Folder[];
+  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
   onPathChange: (path: string) => void;
 }) {
-  const [folders, setFolders] = useState<Folder[]>([
-    {
-      name: "All papers",
-      isOpen: false,
-      folders: [
-        {
-          name: "Reinforcement Learning",
-          isOpen: false,
-          folders: [
-            { name: "Model-based RL", isOpen: false },
-            { name: "Model-free RL", isOpen: false },
-            { name: "Multi-agent RL", isOpen: false },
-          ],
-        },
-        { name: "Imitation learning", isOpen: false },
-        { name: "Optimization", isOpen: false },
-      ],
-    },
-  ]);
-
   const toggleFolder = (index: number, path: number[] = []): void => {
     setFolders((currentFolders) => {
       const findAndToggleFolder = (

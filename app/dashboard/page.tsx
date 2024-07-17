@@ -16,8 +16,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
+import type { Folder } from "@/lib/definitions";
 import PaperTable from "@/components/paper-table";
 import FileExplorer from "@/components/file-explorer";
+
+import { testData } from "../test-data";
 
 export default function Page() {
   // Current path state
@@ -26,6 +29,8 @@ export default function Page() {
     setCurrentPath(newPath);
     console.log(newPath);
   };
+
+  const [folders, setFolders] = useState<Folder[]>(testData);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -37,7 +42,7 @@ export default function Page() {
               <span className="">Arxiv Library</span>
             </Link>
           </div>
-          <FileExplorer onPathChange={handlePathChange} />
+          <FileExplorer folders={folders} setFolders={setFolders} onPathChange={handlePathChange} />
         </div>
       </div>
       <div className="flex flex-col">
@@ -54,7 +59,7 @@ export default function Page() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
-              <FileExplorer onPathChange={handlePathChange} />
+              <FileExplorer folders={folders} setFolders={setFolders} onPathChange={handlePathChange} />
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
