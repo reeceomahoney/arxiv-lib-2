@@ -9,7 +9,11 @@ interface Folder {
   folders?: Folder[];
 }
 
-export default function FileExplorer() {
+export default function FileExplorer({
+  onPathChange,
+}: {
+  onPathChange: (path: string) => void;
+}) {
   const [folders, setFolders] = useState<Folder[]>([
     {
       name: "All papers",
@@ -32,28 +36,30 @@ export default function FileExplorer() {
 
   const toggleFolder = (index: number, path: number[] = []): void => {
     setFolders((currentFolders) => {
-      const updateFolders = (folders: Folder[], path: number[]): Folder[] => {
+      const findAndToggleFolder = (
+        folders: Folder[],
+        path: number[]
+      ): Folder[] => {
+        // Base case: If path is empty, toggle the folder at the root level.
         if (path.length === 0) {
-          const folder = folders[index];
-          return [
-            ...folders.slice(0, index),
-            { ...folder, isOpen: !folder.isOpen },
-            ...folders.slice(index + 1),
-          ];
-        } else {
-          const [currentIndex, ...restPath] = path;
-          const folder = folders[currentIndex];
-          return [
-            ...folders.slice(0, currentIndex),
-            {
-              ...folder,
-              folders: updateFolders(folder.folders || [], restPath),
-            },
-            ...folders.slice(currentIndex + 1),
-          ];
+          return folders.map((folder, idx) =>
+            idx === index ? { ...folder, isOpen: !folder.isOpen } : folder
+          );
         }
+
+        // Recursive case: Navigate deeper into the folders structure.
+        const [currentIndex, ...restPath] = path;
+        return folders.map((folder, idx) =>
+          idx === currentIndex
+            ? {
+                ...folder,
+                folders: findAndToggleFolder(folder.folders || [], restPath),
+              }
+            : folder
+        );
       };
-      return updateFolders(currentFolders, path);
+
+      return findAndToggleFolder(currentFolders, path);
     });
   };
 
@@ -61,10 +67,7 @@ export default function FileExplorer() {
     <ul className="list-none">
       {folders.map((folder, index) => (
         <li key={index}>
-          <div
-            className="hover:bg-gray-300"
-            onClick={() => toggleFolder(index, path)}
-          >
+          <div className="hover:bg-gray-300">
             <div
               className={`cursor-pointer p-2 flex items-center truncate ${
                 "pl-" + 4 * path.length
@@ -72,15 +75,32 @@ export default function FileExplorer() {
             >
               {folder.folders && folder.folders.length > 0 ? (
                 folder.isOpen ? (
-                  <ChevronDown className="mr-2" />
+                  <ChevronDown
+                    className="mr-2 hover:text-gray-400"
+                    onClick={() => {
+                      toggleFolder(index, path);
+                    }}
+                  />
                 ) : (
-                  <ChevronRight className="mr-2" />
+                  <ChevronRight
+                    className="mr-2 hover:text-gray-400"
+                    onClick={() => {
+                      toggleFolder(index, path);
+                    }}
+                  />
                 )
               ) : (
                 <div className="w-6 h-6 mr-2"></div> // Placeholder for alignment
               )}
-              <FolderIcon className="mr-2" />
-              <span className="truncate">{folder.name}</span>
+              <div
+                className="flex items-center hover:text-gray-500"
+                onClick={() => {
+                  onPathChange([...path, index].join("/"));
+                }}
+              >
+                <FolderIcon className="mr-2" />
+                <span className="truncate">{folder.name}</span>
+              </div>
             </div>
           </div>
           {folder.isOpen && folder.folders && (

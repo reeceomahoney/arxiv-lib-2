@@ -20,6 +20,13 @@ import PaperTable from "@/components/paper-table";
 import FileExplorer from "@/components/file-explorer";
 
 export default function Page() {
+  // Current path state
+  const [currentPath, setCurrentPath] = useState("/");
+  const handlePathChange = (newPath: string) => {
+    setCurrentPath(newPath);
+    console.log(newPath);
+  };
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -30,7 +37,7 @@ export default function Page() {
               <span className="">Arxiv Library</span>
             </Link>
           </div>
-          <FileExplorer />
+          <FileExplorer onPathChange={handlePathChange} />
         </div>
       </div>
       <div className="flex flex-col">
@@ -47,7 +54,7 @@ export default function Page() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="flex flex-col">
-              <FileExplorer />
+              <FileExplorer onPathChange={handlePathChange} />
             </SheetContent>
           </Sheet>
           <div className="w-full flex-1">
