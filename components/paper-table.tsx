@@ -7,21 +7,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-export default function PaperTable() {
-  function generateTestPapers() {
-    const testPapers = [];
-    for (let i = 1; i <= 20; i++) {
-      testPapers.push({
-        title: `Test Paper ${i}`,
-        authors: [`Author ${i}`, `Co-Author ${i}`],
-        date: `2023-07-${i.toString().padStart(2, "0")}`,
-      });
-    }
-    return testPapers;
-  }
+import { Paper } from "@/lib/definitions";
 
-  const papers = generateTestPapers();
-
+export default function PaperTable({papers}: {papers: Paper[]}) {
   return (
     <Table>
       <TableHeader>

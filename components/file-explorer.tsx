@@ -12,7 +12,7 @@ export default function FileExplorer({
 }: {
   folders: Folder[];
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
-  onPathChange: (path: string) => void;
+  onPathChange: (path: number[]) => void;
 }) {
   const toggleFolder = (index: number, path: number[] = []): void => {
     setFolders((currentFolders) => {
@@ -75,10 +75,10 @@ export default function FileExplorer({
               <div
                 className="flex items-center hover:text-gray-500"
                 onClick={() => {
-                  onPathChange([...path, index].join("/"));
+                  onPathChange([...path, index]);
                 }}
               >
-                <FolderIcon className="mr-2" />
+                <FolderIcon className={`mr-2 ${folder.papers && folder.papers.length > 0 ? 'text-green-500' : ''}`} />
                 <span className="truncate">{folder.name}</span>
               </div>
             </div>
