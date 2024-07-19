@@ -2,24 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { CircleUser, Menu, Search, LibraryBig } from "lucide-react";
+import { Search, LibraryBig } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import type { Folder, Paper } from "@/lib/definitions";
 import PaperTable from "@/components/paper-table";
-import FileExplorer from "@/components/file-explorer";
+import { Explorer, SheetExplorer } from "@/components/explorer";
 import { ModeToggle } from "@/components/mode-toggle";
+import AccountDropdown from "@/components/account-dropdown";
 
 import { testData } from "../test-data";
 
@@ -59,13 +50,16 @@ export default function Page() {
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex flex-col h-full max-h-screen">
           <div className="sticky top-0 flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-            <Link href="/" className="flex items-center gap-2 font-semibold">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 font-semibold"
+            >
               <LibraryBig className="w-6 h-6" />
               <span className="">Arxiv Library</span>
             </Link>
           </div>
           <div className="sticky top-[60px] overflow-y-auto">
-            <FileExplorer
+            <Explorer
               folders={folders}
               setFolders={setFolders}
               onPathChange={handlePathChange}
@@ -75,25 +69,11 @@ export default function Page() {
       </div>
       <div className="flex flex-col">
         <header className="sticky top-0 z-10 backdrop-blur flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden"
-              >
-                <Menu className="w-5 h-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="flex flex-col">
-              <FileExplorer
-                folders={folders}
-                setFolders={setFolders}
-                onPathChange={handlePathChange}
-              />
-            </SheetContent>
-          </Sheet>
+          <SheetExplorer
+            folders={folders}
+            setFolders={setFolders}
+            handlePathChange={handlePathChange}
+          />
           <div className="flex-1 w-full">
             <form>
               <div className="relative">
@@ -107,20 +87,7 @@ export default function Page() {
             </form>
           </div>
           <ModeToggle />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="w-5 h-5" />
-                <span className="sr-only">Toggle user menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <AccountDropdown />
         </header>
         <main className="flex flex-col flex-1 gap-4 p-4 lg:gap-6 lg:p-6">
           <div className="flex items-center">

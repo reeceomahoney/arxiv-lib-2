@@ -1,11 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import { Menu } from "lucide-react";
+import React from "react";
 import { Folder as FolderIcon, ChevronRight, ChevronDown } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import type { Folder } from "@/lib/definitions";
 
-export default function FileExplorer({
+export function Explorer({
   folders,
   setFolders,
   onPathChange,
@@ -104,5 +108,33 @@ export default function FileExplorer({
       <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
       {renderFolders(folders)}
     </div>
+  );
+}
+
+export function SheetExplorer({
+  folders,
+  setFolders,
+  handlePathChange,
+}: {
+  folders: Folder[];
+  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
+  handlePathChange: (path: number[]) => void;
+}) {
+  return (
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+          <Menu className="w-5 h-5" />
+          <span className="sr-only">Toggle file explorer</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" className="flex flex-col">
+        <Explorer
+          folders={folders}
+          setFolders={setFolders}
+          onPathChange={handlePathChange}
+        />
+      </SheetContent>
+    </Sheet>
   );
 }
