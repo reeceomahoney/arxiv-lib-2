@@ -1,4 +1,4 @@
 # TODO
 
-- [ ] Apply tailwind prettier
+- [x] Apply tailwind prettier
 - [ ] Fix table and explorer scrolling

@@ -78,7 +78,13 @@ export default function FileExplorer({
                   onPathChange([...path, index]);
                 }}
               >
-                <FolderIcon className={`mr-2 ${folder.papers && folder.papers.length > 0 ? 'text-green-500' : ''}`} />
+                <FolderIcon
+                  className={`mr-2 ${
+                    folder.papers && folder.papers.length > 0
+                      ? "text-green-500"
+                      : ""
+                  }`}
+                />
                 <span className="truncate">{folder.name}</span>
               </div>
             </div>
@@ -95,7 +101,7 @@ export default function FileExplorer({
 
   return (
     <div className="flex-1">
-      <h1 className="text-lg font-semibold md:text-2xl p-6">File Explorer</h1>
+      <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
       {renderFolders(folders)}
     </div>
   );

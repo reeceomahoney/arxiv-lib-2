@@ -31,7 +31,7 @@ export default function Page() {
                 <Label htmlFor="password">Password</Label>
                 <Link
                   href="/forgot-password"
-                  className="ml-auto inline-block text-sm underline"
+                  className="inline-block ml-auto text-sm underline"
                 >
                   Forgot your password?
                 </Link>
@@ -45,7 +45,7 @@ export default function Page() {
               Login with Google
             </Button>
           </div>
-          <div className="mt-4 text-center text-sm">
+          <div className="mt-4 text-sm text-center">
             Don&apos;t have an account?{" "}
             <Link href="signup" className="underline">
               Sign up
