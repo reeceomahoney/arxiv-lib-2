@@ -24,7 +24,23 @@ export const testData = [{
               }
             ] },
             { name: "Model-free RL", isOpen: false },
-            { name: "Multi-agent RL", isOpen: false },
+            { name: "Multi-agent RL", isOpen: false , papers: [
+              {
+                title: "Test Paper 10",
+                authors: ["Author 10", "Co-Author 10"],
+                date: "2023-07-01",
+              },
+              {
+                title: "Test Paper 11",
+                authors: ["Author 11", "Co-Author 11"],
+                date: "2023-07-02",
+              },
+              {
+                title: "Test Paper 12",
+                authors: ["Author 12", "Co-Author 12"],
+                date: "2023-07-03",
+              }
+            ] },
           ],
         },
         { name: "Imitation learning", isOpen: false, papers: [
@@ -62,5 +78,19 @@ export const testData = [{
           authors: ["Author 3", "Co-Author 3"],
           date: "2023-07-03",
         },
+        { title: "Test Paper 13",
+          authors: ["Author 13", "Co-Author 13"],
+          date: "2023-07-01",
+        },
+        {
+          title: "Test Paper 14",
+          authors: ["Author 14", "Co-Author 14"],
+          date: "2023-07-02",
+        },
+        {
+          title: "Test Paper 15",
+          authors: ["Author 15", "Co-Author 15"],
+          date: "2023-07-03",
+        }
       ],
     }]

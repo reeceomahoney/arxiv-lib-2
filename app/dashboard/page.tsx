@@ -19,6 +19,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import type { Folder, Paper } from "@/lib/definitions";
 import PaperTable from "@/components/paper-table";
 import FileExplorer from "@/components/file-explorer";
+import { ModeToggle } from "@/components/mode-toggle";
 
 import { testData } from "../test-data";
 
@@ -26,9 +27,6 @@ export default function Page() {
   // Current path state
   const [currentPath, setCurrentPath] = useState<number[]>([0]);
   const [folders, setFolders] = useState<Folder[]>(testData);
-  const [currentPapers, setCurrentPapers] = useState<Paper[]>(
-    folders[0].papers ?? []
-  );
 
   const collectPapers = (folder: Folder) => {
     let papers = folder.papers ?? [];
@@ -39,6 +37,10 @@ export default function Page() {
     }
     return papers;
   };
+
+  const [currentPapers, setCurrentPapers] = useState<Paper[]>(
+    collectPapers(folders[0])
+  );
 
   const handlePathChange = (newPath: number[]) => {
     setCurrentPath(newPath);
@@ -56,21 +58,23 @@ export default function Page() {
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
         <div className="flex flex-col h-full max-h-screen">
-          <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
+          <div className="sticky top-0 flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
             <Link href="/" className="flex items-center gap-2 font-semibold">
               <LibraryBig className="w-6 h-6" />
               <span className="">Arxiv Library</span>
             </Link>
           </div>
-          <FileExplorer
-            folders={folders}
-            setFolders={setFolders}
-            onPathChange={handlePathChange}
-          />
+          <div className="sticky top-[60px] overflow-y-auto">
+            <FileExplorer
+              folders={folders}
+              setFolders={setFolders}
+              onPathChange={handlePathChange}
+            />
+          </div>
         </div>
       </div>
       <div className="flex flex-col">
-        <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+        <header className="sticky top-0 z-10 backdrop-blur flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
           <Sheet>
             <SheetTrigger asChild>
               <Button
@@ -102,6 +106,7 @@ export default function Page() {
               </div>
             </form>
           </div>
+          <ModeToggle />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="secondary" size="icon" className="rounded-full">
