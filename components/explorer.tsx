@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import type { Folder } from "@/lib/definitions";
+import { collectPapers } from "@/lib/utils";
 
 export function Explorer({
   folders,
@@ -51,23 +52,19 @@ export function Explorer({
     <ul className="list-none">
       {folders.map((folder, index) => (
         <li key={index}>
-          <div className="hover:bg-gray-300">
-            <div
-              className={`cursor-pointer p-2 flex items-center truncate ${
-                "pl-" + 4 * path.length
-              }`}
-            >
+          <div className="cursor-pointer text-muted-foreground hover:bg-muted">
+            <div className={`flex items-center p-2 pl-${4 * path.length}`}>
               {folder.folders && folder.folders.length > 0 ? (
                 folder.isOpen ? (
                   <ChevronDown
-                    className="mr-2 hover:text-gray-400"
+                    className="mr-2 hover:text-primary"
                     onClick={() => {
                       toggleFolder(index, path);
                     }}
                   />
                 ) : (
                   <ChevronRight
-                    className="mr-2 hover:text-gray-400"
+                    className="mr-2 hover:text-primary"
                     onClick={() => {
                       toggleFolder(index, path);
                     }}
@@ -77,26 +74,27 @@ export function Explorer({
                 <div className="w-6 h-6 mr-2"></div> // Placeholder for alignment
               )}
               <div
-                className="flex items-center hover:text-gray-500"
+                className="flex items-center truncate hover:text-primary"
                 onClick={() => {
                   onPathChange([...path, index]);
                 }}
               >
                 <FolderIcon
-                  className={`mr-2 ${
-                    folder.papers && folder.papers.length > 0
-                      ? "text-green-500"
-                      : ""
+                  className={`mr-2 flex-shrink-0 fill-current ${
+                    path.length === 0 && index === 0 ? "text-highlight" : ""
                   }`}
                 />
-                <span className="truncate">{folder.name}</span>
+                <span className="text-sm truncate">{folder.name}</span>
+                {collectPapers(folder).length > 0 && (
+                  <span className="ml-2 text-sm text-muted-foreground">
+                    ({collectPapers(folder).length})
+                  </span>
+                )}
               </div>
             </div>
           </div>
           {folder.isOpen && folder.folders && (
-            <ul className="">
-              {renderFolders(folder.folders, [...path, index])}
-            </ul>
+            <>{renderFolders(folder.folders, [...path, index])}</>
           )}
         </li>
       ))}

@@ -13,28 +13,19 @@ import { ModeToggle } from "@/components/mode-toggle";
 import AccountDropdown from "@/components/account-dropdown";
 
 import { testData } from "../test-data";
+import { collectPapers } from "@/lib/utils";
 
 export default function Page() {
   // Current path state
   const [currentPath, setCurrentPath] = useState<number[]>([0]);
   const [folders, setFolders] = useState<Folder[]>(testData);
-
-  const collectPapers = (folder: Folder) => {
-    let papers = folder.papers ?? [];
-    if (folder.folders) {
-      folder.folders.forEach((subFolder) => {
-        papers = papers.concat(collectPapers(subFolder));
-      });
-    }
-    return papers;
-  };
-
   const [currentPapers, setCurrentPapers] = useState<Paper[]>(
     collectPapers(folders[0])
   );
 
   const handlePathChange = (newPath: number[]) => {
     setCurrentPath(newPath);
+
     // Use the path to fetch the papers from the folders state
     let current: Folder | undefined = folders[0];
     for (const index of newPath.slice(1)) {
