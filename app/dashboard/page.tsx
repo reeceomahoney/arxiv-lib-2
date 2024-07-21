@@ -16,22 +16,32 @@ import { testData } from "../test-data";
 import { collectPapers } from "@/lib/utils";
 
 export default function Page() {
-  // Current path state
   const [currentPath, setCurrentPath] = useState<number[]>([0]);
+  const [currentFolderName, setCurrentFolderName] =
+    useState<string>("All Papers");
   const [folders, setFolders] = useState<Folder[]>(testData);
   const [currentPapers, setCurrentPapers] = useState<Paper[]>(
     collectPapers(folders[0])
   );
 
   const handlePathChange = (newPath: number[]) => {
+    let current: Folder | undefined = folders[0];
+
     setCurrentPath(newPath);
 
-    // Use the path to fetch the papers from the folders state
-    let current: Folder | undefined = folders[0];
+    // Calculate the current folder based on the path.
     for (const index of newPath.slice(1)) {
-      if (!current) break;
-      current = current.folders?.[index];
+      current = current?.folders?.[index];
     }
+
+    // Set the current folder name.
+    if (newPath.length === 1) {
+      setCurrentFolderName("All Papers");
+    } else {
+      setCurrentFolderName(current?.name || "");
+    }
+
+    // Collect all papers in the current folder and its subfolders.
     const allPapers = current ? collectPapers(current) : [];
     setCurrentPapers(allPapers);
   };
@@ -54,6 +64,7 @@ export default function Page() {
               folders={folders}
               setFolders={setFolders}
               onPathChange={handlePathChange}
+              currentPath={currentPath}
             />
           </div>
         </div>
@@ -64,6 +75,7 @@ export default function Page() {
             folders={folders}
             setFolders={setFolders}
             handlePathChange={handlePathChange}
+            currentPath={currentPath}
           />
           <div className="flex-1 w-full">
             <form>
@@ -82,7 +94,9 @@ export default function Page() {
         </header>
         <main className="flex flex-col flex-1 gap-4 p-4 lg:gap-6 lg:p-6">
           <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">Papers</h1>
+            <h1 className="text-lg font-semibold md:text-2xl">
+              {currentFolderName}
+            </h1>
           </div>
           <PaperTable papers={currentPapers} />
         </main>

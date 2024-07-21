@@ -14,11 +14,17 @@ export function Explorer({
   folders,
   setFolders,
   onPathChange,
+  currentPath,
 }: {
   folders: Folder[];
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
   onPathChange: (path: number[]) => void;
+  currentPath: number[];
 }) {
+  const isCurrentPath = (path: number[]) => {
+    return JSON.stringify(path) === JSON.stringify(currentPath);
+  };
+
   const toggleFolder = (index: number, path: number[] = []): void => {
     setFolders((currentFolders) => {
       const findAndToggleFolder = (
@@ -52,7 +58,11 @@ export function Explorer({
     <ul className="list-none">
       {folders.map((folder, index) => (
         <li key={index}>
-          <div className="cursor-pointer text-muted-foreground hover:bg-muted">
+          <div
+            className={`cursor-pointer text-muted-foreground hover:bg-muted ${
+              isCurrentPath([...path, index]) ? "bg-muted" : ""
+            }`}
+          >
             <div className={`flex items-center p-2 pl-${4 * path.length}`}>
               {folder.folders && folder.folders.length > 0 ? (
                 folder.isOpen ? (
@@ -74,7 +84,9 @@ export function Explorer({
                 <div className="w-6 h-6 mr-2"></div> // Placeholder for alignment
               )}
               <div
-                className="flex items-center truncate hover:text-primary"
+                className={`flex items-center truncate hover:text-primary ${
+                  isCurrentPath([...path, index]) ? "text-primary" : ""
+                }`}
                 onClick={() => {
                   onPathChange([...path, index]);
                 }}
@@ -113,10 +125,12 @@ export function SheetExplorer({
   folders,
   setFolders,
   handlePathChange,
+  currentPath,
 }: {
   folders: Folder[];
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
   handlePathChange: (path: number[]) => void;
+  currentPath: number[];
 }) {
   return (
     <Sheet>
@@ -131,6 +145,7 @@ export function SheetExplorer({
           folders={folders}
           setFolders={setFolders}
           onPathChange={handlePathChange}
+          currentPath={currentPath}
         />
       </SheetContent>
     </Sheet>

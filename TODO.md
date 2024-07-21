@@ -3,7 +3,7 @@
 - [x] Apply tailwind prettier
 - [x] Fix table and explorer scrolling
 - [x] Fix file explorer colours
-- [ ] Add highlighting for current folder
+- [x] Add highlighting for current folder
 - [ ] Fix top level folder colours
 - [ ] Link papers to database
     - [ ] Setup hosting
