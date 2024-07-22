@@ -8,11 +8,26 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function collectPapers(folder: Folder) {
-  let papers = folder.papers ?? [];
-  if (folder.folders) {
-    folder.folders.forEach((subFolder) => {
-      papers = papers.concat(collectPapers(subFolder));
-    });
-  }
-  return papers;
+  return null;
+}
+
+export function nestFolders(folders: Folder[]): Folder[] {
+  const folderMap: { [key: string]: Folder } = {};
+  const nestedFolders: Folder[] = [];
+
+  // Map folders by id for easy lookup
+  folders.forEach((folder) => {
+    folderMap[folder.id] = { ...folder, folders: [] };
+  });
+
+  // Assign children to their respective parents or identify root folders
+  folders.forEach((folder) => {
+    if (folder.parentId && folderMap[folder.parentId]) {
+      folderMap[folder.parentId].folders!.push(folderMap[folder.id]);
+    } else {
+      nestedFolders.push(folderMap[folder.id]);
+    }
+  });
+
+  return nestedFolders;
 }

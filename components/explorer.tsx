@@ -3,81 +3,62 @@
 import { Menu } from "lucide-react";
 import React from "react";
 import { Folder as FolderIcon, ChevronRight, ChevronDown } from "lucide-react";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import type { Folder } from "@/lib/definitions";
-import { collectPapers } from "@/lib/utils";
+import { collectPapers, nestFolders } from "@/lib/utils";
 
-export function Explorer({
-  folders,
-  setFolders,
-  onPathChange,
-  currentPath,
-}: {
-  folders: Folder[];
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
-  onPathChange: (path: number[]) => void;
-  currentPath: number[];
-}) {
-  const isCurrentPath = (path: number[]) => {
-    return JSON.stringify(path) === JSON.stringify(currentPath);
+export function Explorer({ folderData }: { folderData: Folder[] }) {
+  const [folders, setFolders] = React.useState<Folder[]>(folderData);
+
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const { replace } = useRouter();
+
+  const isCurrentPath = (id: string) => {
+    const params = new URLSearchParams(searchParams);
+    const folderParam = params.get("folder");
+    return folderParam === id;
   };
 
-  const toggleFolder = (index: number, path: number[] = []): void => {
-    setFolders((currentFolders) => {
-      const findAndToggleFolder = (
-        folders: Folder[],
-        path: number[]
-      ): Folder[] => {
-        // Base case: If path is empty, toggle the folder at the root level.
-        if (path.length === 0) {
-          return folders.map((folder, idx) =>
-            idx === index ? { ...folder, isOpen: !folder.isOpen } : folder
-          );
-        }
-
-        // Recursive case: Navigate deeper into the folders structure.
-        const [currentIndex, ...restPath] = path;
-        return folders.map((folder, idx) =>
-          idx === currentIndex
-            ? {
-                ...folder,
-                folders: findAndToggleFolder(folder.folders || [], restPath),
-              }
-            : folder
-        );
-      };
-
-      return findAndToggleFolder(currentFolders, path);
-    });
+  const toggleFolder = (id: string): void => {
+    setFolders((folders) =>
+      folders.map((f) => (f.id === id ? { ...f, isOpen: !f.isOpen } : f))
+    );
   };
 
-  const renderFolders = (folders: Folder[], path: number[] = []) => (
+  const handleClick = (id: string): void => {
+    const params = new URLSearchParams(searchParams);
+    params.set("folder", id);
+    replace(`${pathname}?${params.toString()}`);
+  };
+
+  const renderFolders = (folders: Folder[], depth: number = 0) => (
     <ul className="list-none">
-      {folders.map((folder, index) => (
-        <li key={index}>
+      {folders.map((folder) => (
+        <li key={folder.id}>
           <div
             className={`cursor-pointer text-muted-foreground hover:bg-muted ${
-              isCurrentPath([...path, index]) ? "bg-muted" : ""
+              isCurrentPath(folder.id) ? "bg-muted" : ""
             }`}
           >
-            <div className={`flex items-center p-2 pl-${4 * path.length}`}>
+            <div
+              style={{ paddingLeft: `${0.5 + 0.5 * depth}rem` }}
+              className={`flex items-center p-2`}
+            >
               {folder.folders && folder.folders.length > 0 ? (
                 folder.isOpen ? (
                   <ChevronDown
                     className="mr-2 hover:text-primary"
-                    onClick={() => {
-                      toggleFolder(index, path);
-                    }}
+                    onClick={() => toggleFolder(folder.id)}
                   />
                 ) : (
                   <ChevronRight
                     className="mr-2 hover:text-primary"
-                    onClick={() => {
-                      toggleFolder(index, path);
-                    }}
+                    onClick={() => toggleFolder(folder.id)}
                   />
                 )
               ) : (
@@ -85,28 +66,27 @@ export function Explorer({
               )}
               <div
                 className={`flex items-center truncate hover:text-primary ${
-                  isCurrentPath([...path, index]) ? "text-primary" : ""
+                  isCurrentPath(folder.id) ? "text-primary" : ""
                 }`}
-                onClick={() => {
-                  onPathChange([...path, index]);
-                }}
+                onClick={() => handleClick(folder.id)}
               >
                 <FolderIcon
                   className={`mr-2 flex-shrink-0 fill-current ${
-                    path.length === 0 && index === 0 ? "text-highlight" : ""
+                    folder.name === "All Papers" ? "text-highlight" : ""
                   }`}
                 />
                 <span className="text-sm truncate">{folder.name}</span>
-                {collectPapers(folder).length > 0 && (
+                {/* TODO: collect paper is broken */}
+                {/* {collectPapers(folder).length > 0 && (
                   <span className="ml-2 text-sm text-muted-foreground">
                     ({collectPapers(folder).length})
                   </span>
-                )}
+                )} */}
               </div>
             </div>
           </div>
           {folder.isOpen && folder.folders && (
-            <>{renderFolders(folder.folders, [...path, index])}</>
+            <>{renderFolders(folder.folders, depth + 1)}</>
           )}
         </li>
       ))}
@@ -116,22 +96,12 @@ export function Explorer({
   return (
     <div className="flex-1">
       <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
-      {renderFolders(folders)}
+      {renderFolders(nestFolders(folders))}
     </div>
   );
 }
 
-export function SheetExplorer({
-  folders,
-  setFolders,
-  handlePathChange,
-  currentPath,
-}: {
-  folders: Folder[];
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
-  handlePathChange: (path: number[]) => void;
-  currentPath: number[];
-}) {
+export function SheetExplorer({ folderData }: { folderData: Folder[] }) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -141,12 +111,7 @@ export function SheetExplorer({
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
-        <Explorer
-          folders={folders}
-          setFolders={setFolders}
-          onPathChange={handlePathChange}
-          currentPath={currentPath}
-        />
+        <Explorer folderData={folderData} />
       </SheetContent>
     </Sheet>
   );

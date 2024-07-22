@@ -1,6 +1,4 @@
-"use client";
-
-import { useState } from "react";
+import { GetStaticProps } from "next";
 import Link from "next/link";
 import { Search, LibraryBig } from "lucide-react";
 
@@ -12,40 +10,19 @@ import { Explorer, SheetExplorer } from "@/components/explorer";
 import { ModeToggle } from "@/components/mode-toggle";
 import AccountDropdown from "@/components/account-dropdown";
 
-import { testData } from "../test-data";
-import { collectPapers } from "@/lib/utils";
+import prisma from "@/lib/prisma";
 
-export default function Page() {
-  const [currentPath, setCurrentPath] = useState<number[]>([0]);
-  const [currentFolderName, setCurrentFolderName] =
-    useState<string>("All Papers");
-  const [folders, setFolders] = useState<Folder[]>(testData);
-  const [currentPapers, setCurrentPapers] = useState<Paper[]>(
-    collectPapers(folders[0])
-  );
+async function fetchFolderData() {
+  const folderData = await prisma.folder.findMany();
+  return folderData;
+}
 
-  const handlePathChange = (newPath: number[]) => {
-    let current: Folder | undefined = folders[0];
-
-    setCurrentPath(newPath);
-
-    // Calculate the current folder based on the path.
-    for (const index of newPath.slice(1)) {
-      current = current?.folders?.[index];
-    }
-
-    // Set the current folder name.
-    if (newPath.length === 1) {
-      setCurrentFolderName("All Papers");
-    } else {
-      setCurrentFolderName(current?.name || "");
-    }
-
-    // Collect all papers in the current folder and its subfolders.
-    const allPapers = current ? collectPapers(current) : [];
-    setCurrentPapers(allPapers);
-  };
-
+export default async function Page({
+  searchParams,
+}: {
+  searchParms: { folder?: string };
+}) {
+  const foldersData = await fetchFolderData();
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -60,23 +37,13 @@ export default function Page() {
             </Link>
           </div>
           <div className="sticky top-[60px] overflow-y-auto">
-            <Explorer
-              folders={folders}
-              setFolders={setFolders}
-              onPathChange={handlePathChange}
-              currentPath={currentPath}
-            />
+            <Explorer folderData={foldersData} />
           </div>
         </div>
       </div>
       <div className="flex flex-col">
         <header className="sticky top-0 z-10 backdrop-blur flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
-          <SheetExplorer
-            folders={folders}
-            setFolders={setFolders}
-            handlePathChange={handlePathChange}
-            currentPath={currentPath}
-          />
+          <SheetExplorer folderData={foldersData} />
           <div className="flex-1 w-full">
             <form>
               <div className="relative">
@@ -95,10 +62,10 @@ export default function Page() {
         <main className="flex flex-col flex-1 gap-4 p-4 lg:gap-6 lg:p-6">
           <div className="flex items-center">
             <h1 className="text-lg font-semibold md:text-2xl">
-              {currentFolderName}
+              {/* {currentFolderName} */}
             </h1>
           </div>
-          <PaperTable papers={currentPapers} />
+          {/* <PaperTable papers={currentPapers} /> */}
         </main>
       </div>
     </div>
