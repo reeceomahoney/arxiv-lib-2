@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model Paper {
+  id       String   @id @default(cuid())
+  title    String
+  authors  String[] // JSON representation of the authors array
+  date     DateTime
+  folderId String
+  folder   Folder   @relation(fields: [folderId], references: [id], onDelete: Cascade)
+}
+
+model Folder {
+  id       String   @id @default(cuid())
+  name     String
+  isOpen   Boolean  @default(false)
+  papers   Paper[]
+  parentId String?
+  parent   Folder?  @relation("Subfolders", fields: [parentId], references: [id])
+  children Folder[] @relation("Subfolders")
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model User {
+  id       String   @id @default(cuid())
+  email    String   @unique
+  username String   @unique
+  password String
+  folders  Folder[]
+}
