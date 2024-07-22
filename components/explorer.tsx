@@ -11,17 +11,22 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import type { Folder } from "@/lib/definitions";
 import { collectPapers, nestFolders } from "@/lib/utils";
 
-export function Explorer({ folderData }: { folderData: Folder[] }) {
+export function Explorer({
+  folderData,
+  folderId,
+}: {
+  folderData: Folder[];
+  folderId: string;
+}) {
   const [folders, setFolders] = React.useState<Folder[]>(folderData);
+  const [currentId, setCurrentId] = React.useState(folderId);
 
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { replace } = useRouter();
 
-  const isCurrentPath = (id: string) => {
-    const params = new URLSearchParams(searchParams);
-    const folderParam = params.get("folder");
-    return folderParam === id;
+  const isCurrentFolder = (id: string) => {
+    return currentId === id;
   };
 
   const toggleFolder = (id: string): void => {
@@ -32,6 +37,7 @@ export function Explorer({ folderData }: { folderData: Folder[] }) {
 
   const handleClick = (id: string): void => {
     const params = new URLSearchParams(searchParams);
+    setCurrentId(id);
     params.set("folder", id);
     replace(`${pathname}?${params.toString()}`);
   };
@@ -42,7 +48,7 @@ export function Explorer({ folderData }: { folderData: Folder[] }) {
         <li key={folder.id}>
           <div
             className={`cursor-pointer text-muted-foreground hover:bg-muted ${
-              isCurrentPath(folder.id) ? "bg-muted" : ""
+              isCurrentFolder(folder.id) ? "bg-muted" : ""
             }`}
           >
             <div
@@ -66,7 +72,7 @@ export function Explorer({ folderData }: { folderData: Folder[] }) {
               )}
               <div
                 className={`flex items-center truncate hover:text-primary ${
-                  isCurrentPath(folder.id) ? "text-primary" : ""
+                  isCurrentFolder(folder.id) ? "text-primary" : ""
                 }`}
                 onClick={() => handleClick(folder.id)}
               >
@@ -101,7 +107,13 @@ export function Explorer({ folderData }: { folderData: Folder[] }) {
   );
 }
 
-export function SheetExplorer({ folderData }: { folderData: Folder[] }) {
+export function SheetExplorer({
+  folderData,
+  folderId,
+}: {
+  folderData: Folder[];
+  folderId: string;
+}) {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -111,7 +123,7 @@ export function SheetExplorer({ folderData }: { folderData: Folder[] }) {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
-        <Explorer folderData={folderData} />
+        <Explorer folderData={folderData} folderId={folderId} />
       </SheetContent>
     </Sheet>
   );

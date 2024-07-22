@@ -2,10 +2,10 @@
 
 ## Rendering
 
-- [ ] Move explorer into layout
-- [ ] Turn page into server component
-- [ ] Make table server component
-- [ ] Make searech client component
+- [x] Turn page into server component
+- [x] Make explorer client component
+- [x] Make table server component
+- [ ] Make search client component
 
 ## Explorer
 
@@ -14,7 +14,7 @@
 - [x] Add highlighting for current folder
 - [ ] Fix top level folder colours
 - [ ] Improve hover effect
-- [ ] Fix indentation bug
+- [x] Fix indentation bug
 
 ## Papers
 
@@ -23,6 +23,7 @@
   - [ ] Add checkboxes
 - [ ] Add panel for paper info
 - [ ] Add pdf viewer
+- [ ] Add skeleton loading
 
 ## Backend
 

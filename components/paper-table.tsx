@@ -7,27 +7,40 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Paper } from "@/lib/definitions";
+async function fetchPapersAndTitle(folderId: string) {
+  const folderWithPapers = await prisma?.folder.findUnique({
+    where: { id: folderId },
+    include: { papers: true },
+  });
+  const papers = folderWithPapers?.papers || [];
+  const title = folderWithPapers?.name || "All Papers";
+  return { papers, title };
+}
 
-export default function PaperTable({papers}: {papers: Paper[]}) {
+export default async function PaperTable({ folderId }: { folderId: string }) {
+  const { papers, title } = await fetchPapersAndTitle(folderId);
+
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Title</TableHead>
-          <TableHead>Authors</TableHead>
-          <TableHead>Date</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {papers.map((paper) => (
-          <TableRow key={paper.title}>
-            <TableCell>{paper.title}</TableCell>
-            <TableCell>{paper.authors.join(", ")}</TableCell>
-            <TableCell>{paper.date}</TableCell>
+    <>
+      <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Title</TableHead>
+            <TableHead>Authors</TableHead>
+            <TableHead>Date</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {papers?.map((paper) => (
+            <TableRow key={paper.title}>
+              <TableCell>{paper.title}</TableCell>
+              <TableCell>{paper.authors.join(", ")}</TableCell>
+              <TableCell>{new Date(paper.date).toLocaleDateString()}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </>
   );
 }
