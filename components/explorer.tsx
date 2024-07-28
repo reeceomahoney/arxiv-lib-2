@@ -1,45 +1,22 @@
 "use client";
 
 import { Menu } from "lucide-react";
-import React from "react";
 import { Folder as FolderIcon, ChevronRight, ChevronDown } from "lucide-react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 import type { Folder } from "@/lib/definitions";
 import { collectPapers, nestFolders } from "@/lib/utils";
+import { useFolderData } from "@/components/folder-context";
 
-export function Explorer({
-  folderData,
-  folderId,
-}: {
-  folderData: Folder[];
-  folderId: string;
-}) {
-  const [folders, setFolders] = React.useState<Folder[]>(folderData);
-  const [currentId, setCurrentId] = React.useState(folderId);
-
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-  const { replace } = useRouter();
-
-  const isCurrentFolder = (id: string) => {
-    return currentId === id;
-  };
+export function Explorer() {
+  const { folders, setFolders, currentId, setCurrentId } = useFolderData();
 
   const toggleFolder = (id: string): void => {
     setFolders((folders) =>
       folders.map((f) => (f.id === id ? { ...f, isOpen: !f.isOpen } : f))
     );
-  };
-
-  const handleClick = (id: string): void => {
-    const params = new URLSearchParams(searchParams);
-    setCurrentId(id);
-    params.set("folder", id);
-    replace(`${pathname}?${params.toString()}`);
   };
 
   const renderFolders = (folders: Folder[], depth: number = 0) => (
@@ -48,7 +25,7 @@ export function Explorer({
         <li key={folder.id}>
           <div
             className={`cursor-pointer text-muted-foreground hover:bg-muted ${
-              isCurrentFolder(folder.id) ? "bg-muted" : ""
+              currentId === folder.id ? "bg-muted" : ""
             }`}
           >
             <div
@@ -72,9 +49,9 @@ export function Explorer({
               )}
               <div
                 className={`flex items-center truncate hover:text-primary ${
-                  isCurrentFolder(folder.id) ? "text-primary" : ""
+                  currentId === folder.id ? "text-primary" : ""
                 }`}
-                onClick={() => handleClick(folder.id)}
+                onClick={() => setCurrentId(folder.id)}
               >
                 <FolderIcon
                   className={`mr-2 flex-shrink-0 fill-current ${
@@ -107,13 +84,7 @@ export function Explorer({
   );
 }
 
-export function SheetExplorer({
-  folderData,
-  folderId,
-}: {
-  folderData: Folder[];
-  folderId: string;
-}) {
+export function SheetExplorer() {
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -123,7 +94,7 @@ export function SheetExplorer({
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="flex flex-col">
-        <Explorer folderData={folderData} folderId={folderId} />
+        <Explorer />
       </SheetContent>
     </Sheet>
   );

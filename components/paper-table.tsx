@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -7,18 +9,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-async function fetchPapersAndTitle(folderId: string) {
-  const folderWithPapers = await prisma?.folder.findUnique({
-    where: { id: folderId },
-    include: { papers: true },
-  });
-  const papers = folderWithPapers?.papers || [];
-  const title = folderWithPapers?.name || "All Papers";
-  return { papers, title };
-}
+import { useFolderData } from "@/components/folder-context";
 
-export default async function PaperTable({ folderId }: { folderId: string }) {
-  const { papers, title } = await fetchPapersAndTitle(folderId);
+export default function PaperTable() {
+  const { folders, papers, currentId } = useFolderData();
+  const title = folders.find((folder) => folder.id === currentId)?.name;
+
+  const filteredPapers = papers.filter((paper) => paper.folderId === currentId);
 
   return (
     <>
@@ -32,11 +29,13 @@ export default async function PaperTable({ folderId }: { folderId: string }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {papers?.map((paper) => (
+          {filteredPapers?.map((paper) => (
             <TableRow key={paper.title}>
               <TableCell>{paper.title}</TableCell>
               <TableCell>{paper.authors.join(", ")}</TableCell>
-              <TableCell>{new Date(paper.date).toLocaleDateString()}</TableCell>
+              <TableCell>
+                {new Date(paper.date).toLocaleDateString("en-US")}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

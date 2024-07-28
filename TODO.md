@@ -6,6 +6,7 @@
 - [x] Make explorer client component
 - [x] Make table server component
 - [ ] Make search client component
+- [x] Move state to context
 
 ## Explorer
 
