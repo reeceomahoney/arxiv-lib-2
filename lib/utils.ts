@@ -1,14 +1,31 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-import type { Folder } from "@/lib/definitions";
+import type { Folder, Paper } from "@/lib/definitions";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function collectPapers(folder: Folder) {
-  return null;
+export function collectPapers(
+  folderId: string,
+  allFolders: Folder[],
+  allPapers: Paper[]
+): Paper[] {
+  const papers: Paper[] = allPapers.filter(
+    (paper) => paper.folderId === folderId
+  );
+
+  const subfolders = allFolders.filter(
+    (subfolder) => subfolder.parentId === folderId
+  );
+
+  for (const subfolder of subfolders) {
+    const subfolderPapers = collectPapers(subfolder.id, allFolders, allPapers);
+    papers.push(...subfolderPapers);
+  }
+
+  return papers;
 }
 
 export function nestFolders(folders: Folder[]): Folder[] {
