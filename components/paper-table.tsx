@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/table";
 
 import { useFolderData } from "@/components/folder-context";
+import { collectPapers } from "@/lib/utils";
 
 export default function PaperTable() {
   const { folders, papers, currentId } = useFolderData();
   const title = folders.find((folder) => folder.id === currentId)?.name;
 
-  const filteredPapers = papers.filter((paper) => paper.folderId === currentId);
+  const filteredPapers = collectPapers(currentId, folders, papers);
 
   return (
     <>
