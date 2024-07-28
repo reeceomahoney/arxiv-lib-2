@@ -28,7 +28,7 @@
 
 ## Backend
 
-- [ ] Link papers to database
+- [x] Link papers to database
   - [x] Setup hosting
 
 ## Misc
