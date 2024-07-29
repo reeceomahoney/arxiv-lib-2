@@ -11,7 +11,8 @@ import { collectPapers, nestFolders } from "@/lib/utils";
 import { useFolderData } from "@/components/folder-context";
 
 export function Explorer() {
-  const { folders, setFolders, currentId, setCurrentId } = useFolderData();
+  const { folders, papers, setFolders, currentId, setCurrentId } =
+    useFolderData();
 
   const toggleFolder = (id: string): void => {
     setFolders((folders) =>
@@ -19,60 +20,66 @@ export function Explorer() {
     );
   };
 
+  const getNumPapers = (folder: Folder): number => {
+    return collectPapers(folder.id, folders, papers).length;
+  };
+
   const renderFolders = (folders: Folder[], depth: number = 0) => (
     <ul className="list-none">
-      {folders.map((folder) => (
-        <li key={folder.id}>
-          <div
-            className={`cursor-pointer text-muted-foreground hover:bg-muted ${
-              currentId === folder.id ? "bg-muted" : ""
-            }`}
-          >
+      {folders.map((folder) => {
+        const numPapers = getNumPapers(folder);
+        return (
+          <li key={folder.id}>
             <div
-              style={{ paddingLeft: `${0.5 + 0.5 * depth}rem` }}
-              className={`flex items-center p-2`}
+              className={`cursor-pointer text-muted-foreground hover:bg-muted ${
+                currentId === folder.id ? "bg-muted" : ""
+              }`}
             >
-              {folder.folders && folder.folders.length > 0 ? (
-                folder.isOpen ? (
-                  <ChevronDown
-                    className="mr-2 hover:text-primary"
-                    onClick={() => toggleFolder(folder.id)}
-                  />
-                ) : (
-                  <ChevronRight
-                    className="mr-2 hover:text-primary"
-                    onClick={() => toggleFolder(folder.id)}
-                  />
-                )
-              ) : (
-                <div className="w-6 h-6 mr-2"></div> // Placeholder for alignment
-              )}
               <div
-                className={`flex items-center truncate hover:text-primary ${
-                  currentId === folder.id ? "text-primary" : ""
-                }`}
-                onClick={() => setCurrentId(folder.id)}
+                style={{ paddingLeft: `${0.5 + 0.5 * depth}rem` }}
+                className={`flex items-center p-2`}
               >
-                <FolderIcon
-                  className={`mr-2 flex-shrink-0 fill-current ${
-                    folder.name === "All Papers" ? "text-highlight" : ""
+                {folder.folders && folder.folders.length > 0 ? (
+                  folder.isOpen ? (
+                    <ChevronDown
+                      className="mr-2 hover:text-primary"
+                      onClick={() => toggleFolder(folder.id)}
+                    />
+                  ) : (
+                    <ChevronRight
+                      className="mr-2 hover:text-primary"
+                      onClick={() => toggleFolder(folder.id)}
+                    />
+                  )
+                ) : (
+                  <div className="w-6 h-6 mr-2"></div> // Placeholder for alignment
+                )}
+                <div
+                  className={`flex items-center truncate hover:text-primary ${
+                    currentId === folder.id ? "text-primary" : ""
                   }`}
-                />
-                <span className="text-sm truncate">{folder.name}</span>
-                {/* TODO: collect paper is broken */}
-                {/* {collectPapers(folder).length > 0 && (
-                  <span className="ml-2 text-sm text-muted-foreground">
-                    ({collectPapers(folder).length})
-                  </span>
-                )} */}
+                  onClick={() => setCurrentId(folder.id)}
+                >
+                  <FolderIcon
+                    className={`mr-2 flex-shrink-0 fill-current ${
+                      folder.name === "All Papers" ? "text-highlight" : ""
+                    }`}
+                  />
+                  <span className="text-sm truncate">{folder.name}</span>
+                  {numPapers > 0 && (
+                    <span className="ml-2 text-sm text-muted-foreground">
+                      ({numPapers})
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-          {folder.isOpen && folder.folders && (
-            <>{renderFolders(folder.folders, depth + 1)}</>
-          )}
-        </li>
-      ))}
+            {folder.isOpen && folder.folders && (
+              <>{renderFolders(folder.folders, depth + 1)}</>
+            )}
+          </li>
+        );
+      })}
     </ul>
   );
 
