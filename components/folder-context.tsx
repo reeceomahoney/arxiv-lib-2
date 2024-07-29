@@ -1,15 +1,11 @@
 "use client";
 
 import React, { createContext, useContext } from "react";
-import type { Folder } from "@/lib/definitions";
-
-interface FolderDataContextProps {
-  folders: Folder[];
-  papers: any[];
-  currentId: string;
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
-  setCurrentId: React.Dispatch<React.SetStateAction<string>>;
-}
+import type {
+  Folder,
+  FolderDataContextProps,
+  FolderDataProviderProps,
+} from "@/lib/definitions";
 
 const FolderDataContext = createContext<FolderDataContextProps | undefined>(
   undefined
@@ -22,12 +18,6 @@ export const useFolderData = () => {
   }
   return context;
 };
-
-interface FolderDataProviderProps {
-  children: React.ReactNode;
-  folderData: Folder[];
-  papers: any[];
-}
 
 export const FolderDataProvider: React.FC<FolderDataProviderProps> = ({
   children,

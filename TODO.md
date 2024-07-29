@@ -16,6 +16,7 @@
 - [ ] Fix top level folder colours
 - [ ] Improve hover effect
 - [x] Fix indentation bug
+- [ ] Fix scroll
 
 ## Papers
 
@@ -24,7 +25,6 @@
   - [ ] Add checkboxes
 - [ ] Add panel for paper info
 - [ ] Add pdf viewer
-- [ ] Add skeleton loading
 
 ## Backend
 

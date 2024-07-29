@@ -1,3 +1,5 @@
+// Documents
+
 export type Paper = {
   id: string;
   title: string;
@@ -15,3 +17,27 @@ export type Folder = {
   folders?: Folder[];
   papers?: Paper[];
 };
+
+// Context
+
+export type FolderDataContextProps = {
+  folders: Folder[];
+  papers: any[];
+  currentId: string;
+  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
+  setCurrentId: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export type FolderDataProviderProps = {
+  children: React.ReactNode;
+  folderData: Folder[];
+  papers: any[];
+}
+
+// Actions
+
+export type CreateFolderData = {
+  name: string;
+  userId: string;
+  parentId?: string;
+}
