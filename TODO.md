@@ -17,6 +17,9 @@
 - [ ] Improve hover effect
 - [x] Fix indentation bug
 - [ ] Fix scroll
+- [x] Create add folder feature
+- [ ] Fix path revalidation bug
+- [ ] Add right click menu to rename and delete folders
 
 ## Papers
 

@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 import { useFolderData } from "@/components/folder-context";
 import { collectPapers } from "@/lib/utils";
@@ -20,7 +21,10 @@ export default function PaperTable() {
 
   return (
     <>
-      <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-lg font-semibold md:text-2xl">{title}</h1>
+        <Button className="mt-4">Add Paper</Button>
+      </div>
       <Table>
         <TableHeader>
           <TableRow>

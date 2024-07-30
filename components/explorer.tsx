@@ -5,6 +5,7 @@ import { Folder as FolderIcon, ChevronRight, ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import AddFolder from "@/components/add-folder";
 
 import type { Folder } from "@/lib/definitions";
 import { collectPapers, nestFolders } from "@/lib/utils";
@@ -85,7 +86,10 @@ export function Explorer() {
 
   return (
     <div className="flex-1">
-      <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="p-6 text-lg font-semibold md:text-2xl">File Explorer</h1>
+        <AddFolder />
+      </div>
       {renderFolders(nestFolders(folders))}
     </div>
   );
